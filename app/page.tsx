@@ -36,6 +36,8 @@ const [teamLoading, setTeamLoading] = useState(true);
   const [activeStory, setActiveStory] = useState(0);
   const [storyPaused, setStoryPaused] = useState(false);
   const [selectedStory, setSelectedStory] = useState<StoryItem | null>(null);
+  // Fullscreen story lightbox (click image to open & scroll)
+  const [lightboxStory, setLightboxStory] = useState<StoryItem | null>(null);
   const slideshowRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Event detail expansion
@@ -86,10 +88,10 @@ const [teamLoading, setTeamLoading] = useState(true);
   }, [stories.length]);
 
   useEffect(() => {
-    if (storyPaused || selectedStory || stories.length <= 1) return;
+    if (storyPaused || selectedStory || lightboxStory || stories.length <= 1) return;
     slideshowRef.current = setInterval(advanceSlide, 2500);
     return () => { if (slideshowRef.current) clearInterval(slideshowRef.current); };
-  }, [storyPaused, selectedStory, advanceSlide, stories.length]);
+  }, [storyPaused, selectedStory, lightboxStory, advanceSlide, stories.length]);
 
   const featuredEvents = useMemo(() => events.slice(0, 6), [events]);
 
@@ -374,60 +376,36 @@ const [teamLoading, setTeamLoading] = useState(true);
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Story info — click anywhere to toggle description */}
-                {(() => {
-                  const isExpanded = selectedStory?._id === stories[activeStory]._id;
-                  return (
-                    <div
-                      onClick={() => setSelectedStory(isExpanded ? null : stories[activeStory])}
-                      className="absolute inset-0 flex cursor-pointer flex-col justify-end p-8 md:p-12"
+                {/* Story info — click to open fullscreen scrollable view */}
+                <div
+                  onClick={() => setLightboxStory(stories[activeStory])}
+                  className="absolute inset-0 flex cursor-pointer flex-col justify-end p-8 md:p-12"
+                >
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeStory}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.4, delay: 0.15 }}
+                      className="max-w-2xl"
                     >
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={activeStory}
-                          initial={{ opacity: 0, y: 16 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -8 }}
-                          transition={{ duration: 0.4, delay: 0.15 }}
-                          className="max-w-2xl"
-                        >
-                          <p className="text-xs uppercase tracking-[0.25em] text-red-400 font-semibold mb-2">
-                            Story {activeStory + 1} of {stories.length}
-                          </p>
-                          <h3 className="text-3xl md:text-5xl font-black text-white mb-3 leading-tight drop-shadow-lg">
-                            {stories[activeStory].title}
-                          </h3>
-
-                          <AnimatePresence mode="wait" initial={false}>
-                            {isExpanded ? (
-                              <motion.p
-                                key="desc"
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.4, ease: 'easeInOut' }}
-                                className="overflow-hidden text-gray-200 text-sm md:text-lg leading-relaxed"
-                              >
-                                {stories[activeStory].description}
-                              </motion.p>
-                            ) : (
-                              <motion.span
-                                key="hint"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-white/70"
-                              >
-                                <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-                                Click to read
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
-                  );
-                })()}
+                      <p className="text-xs uppercase tracking-[0.25em] text-red-400 font-semibold mb-2">
+                        Story {activeStory + 1} of {stories.length}
+                      </p>
+                      <h3 className="text-3xl md:text-5xl font-black text-white mb-3 leading-tight drop-shadow-lg">
+                        {stories[activeStory].title}
+                      </h3>
+                      <p className="hidden sm:block max-w-xl text-sm md:text-base leading-relaxed text-gray-200 line-clamp-2 drop-shadow">
+                        {stories[activeStory].description}
+                      </p>
+                      <span className="mt-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-white/80">
+                        <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+                        Click to view full story
+                      </span>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
 
                 {/* Arrow navigation */}
                 <button
@@ -457,7 +435,7 @@ const [teamLoading, setTeamLoading] = useState(true);
                       onClick={() => { setSelectedStory(null); setActiveStory(idx); }}
                       className="relative flex-1 h-0.5 bg-white/20 rounded-full overflow-hidden"
                     >
-                      {idx === activeStory && !storyPaused && !selectedStory && (
+                      {idx === activeStory && !storyPaused && !selectedStory && !lightboxStory && (
                         <motion.div
                           className="absolute inset-0 bg-red-500 origin-left"
                           initial={{ scaleX: 0 }}
@@ -494,6 +472,60 @@ const [teamLoading, setTeamLoading] = useState(true);
           )}
         </div>
       </section>
+
+      {/* ── STORY LIGHTBOX (fullscreen, scrollable) ── */}
+      <AnimatePresence>
+        {lightboxStory && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[100] overflow-y-auto overscroll-contain bg-black/95 backdrop-blur-sm"
+            onClick={() => setLightboxStory(null)}
+          >
+            {/* Close button (fixed) */}
+            <button
+              onClick={() => setLightboxStory(null)}
+              aria-label="Close"
+              className="fixed top-4 right-4 z-[110] flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition hover:bg-red-600/80"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div className="flex min-h-full items-start justify-center p-4 py-12 sm:py-16">
+              <motion.div
+                initial={{ opacity: 0, y: 24, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 16, scale: 0.98 }}
+                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-4xl overflow-hidden rounded-2xl border border-red-900/40 bg-gray-950 shadow-2xl"
+              >
+                {/* Full image — shown in full, not cropped */}
+                <img
+                  src={imageSrc(lightboxStory.imageUrl)}
+                  alt={lightboxStory.title}
+                  className="w-full h-auto object-contain bg-black"
+                />
+
+                {/* Story text */}
+                <div className="p-6 sm:p-10">
+                  <p className="text-xs uppercase tracking-[0.25em] text-red-400 font-semibold mb-3">Community Story</p>
+                  <h3 className="text-3xl sm:text-4xl font-black text-white leading-tight mb-5">
+                    {lightboxStory.title}
+                  </h3>
+                  <p className="whitespace-pre-line text-base sm:text-lg leading-relaxed text-gray-300">
+                    {lightboxStory.description}
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── EVENTS SECTION ── */}
       <section id="events" className="relative z-10 py-16 sm:py-24 px-4 border-t border-red-900/20 scroll-mt-20">

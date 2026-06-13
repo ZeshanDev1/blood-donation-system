@@ -129,6 +129,21 @@
     @apply font-sans;
     scroll-behavior: smooth;
   }
+
+  /* Scale the whole UI down on larger screens so it doesn't feel zoomed-in.
+     Tailwind sizes/spacing are rem-based, so this proportionally shrinks
+     typography, padding, gaps and container widths together. Mobile is unaffected. */
+  @media (min-width: 1024px) {
+    html {
+      font-size: 90%; /* 14.4px base */
+    }
+  }
+
+  @media (min-width: 1536px) {
+    html {
+      font-size: 87.5%; /* 14px base */
+    }
+  }
 }
 
 @layer utilities {
