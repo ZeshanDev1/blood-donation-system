@@ -41,6 +41,9 @@ const [teamLoading, setTeamLoading] = useState(true);
   // Event detail expansion
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
 
+  // Mobile nav menu
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
   useEffect(() => {
     let active = true;
     const loadEvents = async () => {
@@ -149,12 +152,12 @@ const [teamLoading, setTeamLoading] = useState(true);
 
       {/* Nav */}
       <nav className="z-50 border-b border-red-900/20 bg-black/50 backdrop-blur-md sticky top-0">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-6">
-          <Link href="/" aria-label="QBDS home" className="group shrink-0">
-            <BrandMark compact showFullName className="scale-105 origin-left" />
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-3 sm:gap-6">
+          <Link href="/" aria-label="QBDS home" className="group min-w-0 shrink">
+            <BrandMark compact showFullName className="origin-left" />
           </Link>
 
-          {/* Center nav links */}
+          {/* Center nav links (desktop) */}
           <div className="hidden lg:flex items-center gap-1">
             {[
               { label: 'Mission', href: '#mission' },
@@ -173,14 +176,67 @@ const [teamLoading, setTeamLoading] = useState(true);
             ))}
           </div>
 
-          <div className="shrink-0">
-            <Link href="/register">
-              <Button className="bg-red-600 hover:bg-red-700 text-white h-10 px-6 text-sm font-semibold rounded-lg transition-all shadow-md shadow-red-600/40 hover:shadow-red-600/60">
+          <div className="flex items-center gap-2 shrink-0">
+            <Link href="/register" className="hidden sm:block">
+              <Button className="bg-red-600 hover:bg-red-700 text-white h-10 px-4 sm:px-6 text-sm font-semibold rounded-lg transition-all shadow-md shadow-red-600/40 hover:shadow-red-600/60">
                 Donate Blood
               </Button>
             </Link>
+
+            {/* Mobile hamburger */}
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen((v) => !v)}
+              aria-label="Toggle menu"
+              aria-expanded={mobileNavOpen}
+              className="lg:hidden flex h-10 w-10 items-center justify-center rounded-lg border border-red-900/30 text-gray-200 hover:bg-red-600/10 hover:text-white transition"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                {mobileNavOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
+
+        {/* Mobile dropdown menu */}
+        <AnimatePresence>
+          {mobileNavOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="lg:hidden overflow-hidden border-t border-red-900/20 bg-black/95 backdrop-blur-md"
+            >
+              <div className="px-4 py-4 space-y-1">
+                {[
+                  { label: 'Mission', href: '#mission' },
+                  { label: 'Stories', href: '#stories' },
+                  { label: 'Events', href: '#events' },
+                  { label: 'Team', href: '#team' },
+                ].map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileNavOpen(false)}
+                    className="block rounded-lg px-4 py-3 text-sm font-semibold text-gray-200 hover:bg-red-600/10 hover:text-white transition"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+                <Link href="/register" onClick={() => setMobileNavOpen(false)} className="block pt-2">
+                  <Button className="w-full bg-red-600 hover:bg-red-700 text-white h-11 text-sm font-semibold rounded-lg shadow-md shadow-red-600/40">
+                    Donate Blood
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero */}
@@ -225,10 +281,10 @@ const [teamLoading, setTeamLoading] = useState(true);
             </motion.div>
 
             <div className="space-y-4">
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-tight tracking-tight text-balance [text-shadow:0_4px_30px_rgba(0,0,0,0.85)]">
+              <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-tight tracking-tight text-balance [text-shadow:0_4px_30px_rgba(0,0,0,0.85)]">
                 <span className="inline-block"><span className="text-red-600 [text-shadow:0_4px_30px_rgba(220,38,38,0.5)]">QIMS</span></span>
                 <br />
-                <span className="inline-block whitespace-nowrap">Blood Donors Society</span>
+                <span className="inline-block lg:whitespace-nowrap">Blood Donors Society</span>
               </h1>
             </div>
 
@@ -274,16 +330,16 @@ const [teamLoading, setTeamLoading] = useState(true);
       </motion.section>
 
       {/* ── STORIES SLIDESHOW ── */}
-      <section id="stories" className="relative z-10 py-24 px-4 border-t border-red-900/20 scroll-mt-20">
+      <section id="stories" className="relative z-10 py-16 sm:py-24 px-4 border-t border-red-900/20 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest text-red-500 font-semibold mb-3">Community Stories</p>
-            <h2 className="text-5xl md:text-6xl font-black text-white mb-4 text-balance">Moments That Matter</h2>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 text-balance">Moments That Matter</h2>
             <p className="text-lg text-gray-400 max-w-3xl mx-auto">Gallery of events and activities from our community initiatives</p>
           </motion.div>
 
           {storiesLoading ? (
-            <div className="h-[520px] rounded-3xl border border-red-600/20 bg-gray-900/20 animate-pulse" />
+            <div className="h-[420px] sm:h-[520px] rounded-3xl border border-red-600/20 bg-gray-900/20 animate-pulse" />
           ) : stories.length === 0 ? (
             <div className="modern-card p-12 text-center rounded-2xl">
               <div className="card-glow" />
@@ -297,7 +353,7 @@ const [teamLoading, setTeamLoading] = useState(true);
               onMouseLeave={() => setStoryPaused(false)}
             >
               {/* Main slideshow area */}
-              <div className="relative h-[520px] rounded-3xl overflow-hidden border border-red-900/30">
+              <div className="relative h-[420px] sm:h-[520px] rounded-3xl overflow-hidden border border-red-900/30">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeStory}
@@ -440,11 +496,11 @@ const [teamLoading, setTeamLoading] = useState(true);
       </section>
 
       {/* ── EVENTS SECTION ── */}
-      <section id="events" className="relative z-10 py-24 px-4 border-t border-red-900/20 scroll-mt-20">
+      <section id="events" className="relative z-10 py-16 sm:py-24 px-4 border-t border-red-900/20 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-16">
             <p className="text-sm uppercase tracking-widest text-red-500 font-semibold mb-3">Community Events</p>
-            <h2 className="text-5xl md:text-6xl font-black text-white mb-4 text-balance">Upcoming Blood Drives</h2>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 text-balance">Upcoming Blood Drives</h2>
             <p className="text-lg text-gray-400 max-w-3xl">Explore live events posted by our team. Every event updates automatically when new drives are scheduled in your area.</p>
           </motion.div>
 
@@ -635,11 +691,11 @@ const [teamLoading, setTeamLoading] = useState(true);
       </section>
 
       {/* Team Section */}
-      <section id="team" className="relative z-10 py-24 px-4 border-t border-red-900/20 scroll-mt-20">
+      <section id="team" className="relative z-10 py-16 sm:py-24 px-4 border-t border-red-900/20 scroll-mt-20">
         <div className="max-w-7xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center mb-16">
             <p className="text-sm uppercase tracking-widest text-red-500 font-semibold mb-3">Our Team</p>
-            <h2 className="text-5xl md:text-6xl font-black text-white mb-4 text-balance">Meet Our Team</h2>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 text-balance">Meet Our Team</h2>
             <p className="text-lg text-gray-400 max-w-3xl mx-auto">Dedicated professionals committed to saving lives</p>
           </motion.div>
 
@@ -689,12 +745,12 @@ const [teamLoading, setTeamLoading] = useState(true);
       </section>
 
       {/* CTA */}
-      <section className="relative z-10 py-24 px-4 border-t border-red-900/20">
+      <section className="relative z-10 py-16 sm:py-24 px-4 border-t border-red-900/20">
         <div className="max-w-5xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="modern-card p-12 md:p-16 text-center">
             <div className="card-glow" />
             <div className="relative z-10">
-              <h2 className="text-5xl md:text-6xl font-black text-white mb-4 text-balance">Ready to Make a Difference?</h2>
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 text-balance">Ready to Make a Difference?</h2>
               <p className="text-lg md:text-xl text-gray-300 mb-8">Join thousands of donors and patients saving lives every single day</p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <Link href="/register">

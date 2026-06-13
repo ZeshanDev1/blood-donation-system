@@ -123,13 +123,19 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             </div>
           </aside>
 
-          <div className="flex flex-1 flex-col">
-            <header className="border-b border-slate-200 bg-white px-6 py-4 text-slate-900">
-              <div className="flex items-center justify-between">
+          <div className="flex min-w-0 flex-1 flex-col">
+            <header className="border-b border-slate-200 bg-white px-4 py-4 text-slate-900 sm:px-6">
+              <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-red-500">Admin Console</p>
                   <h1 className="text-2xl font-black">QBDS</h1>
                 </div>
+                <Button
+                  onClick={logout}
+                  className="md:hidden bg-red-600 hover:bg-red-700 text-white h-9 px-4 text-sm"
+                >
+                  Logout
+                </Button>
               </div>
               <div className="mt-4 flex flex-wrap gap-2 md:hidden">
                 {navItems.map((item) => (
@@ -144,7 +150,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               </div>
             </header>
 
-            <main className="flex-1 bg-neutral-100 px-6 py-8 text-slate-900">
+            <main className="flex-1 bg-neutral-100 px-4 py-6 text-slate-900 sm:px-6 sm:py-8">
               {children}
             </main>
           </div>

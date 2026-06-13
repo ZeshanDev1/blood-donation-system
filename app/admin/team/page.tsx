@@ -293,7 +293,8 @@ export default function AdminTeamPage() {
             <p className="text-sm text-slate-400 mt-1">Click "Add Member" to add the first one.</p>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[520px] text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50">
                 <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Member</th>
@@ -346,6 +347,7 @@ export default function AdminTeamPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

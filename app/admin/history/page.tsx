@@ -256,7 +256,7 @@ export default function AdminHistoryPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[760px] text-sm">
               <thead>
                 <tr className="border-b border-slate-100">
                   {['Date', 'Donor', 'Blood Group', 'Recipient', 'Hospital', 'Notes'].map(h => (

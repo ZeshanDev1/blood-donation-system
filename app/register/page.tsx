@@ -114,7 +114,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Registration Card */}
-        <div className="bg-black/70 border border-red-600/30 rounded-2xl p-8 backdrop-blur-xl">
+        <div className="bg-black/70 border border-red-600/30 rounded-2xl p-5 sm:p-8 backdrop-blur-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-600/20 border border-red-600/50 text-red-400 text-sm p-4 rounded-lg flex items-start gap-3 animate-slideDown">

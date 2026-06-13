@@ -424,7 +424,7 @@ export default function AdminRequestsPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[900px] text-sm">
               <thead>
                 <tr className="border-b border-slate-100">
                   {['Recipient', 'QIMS ID', 'Age / Gender', 'Department', 'Contact', 'Blood Group', 'Units', 'City', 'Urgency', 'Received', 'Actions'].map(h => (

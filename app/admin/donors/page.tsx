@@ -207,7 +207,7 @@ export default function AdminDonorsPage() {
       <div className="rounded-2xl border border-slate-200 bg-white px-6 py-5 shadow-sm space-y-4">
 
         {/* search row */}
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
@@ -221,7 +221,7 @@ export default function AdminDonorsPage() {
           <input
             value={city} onChange={e => setCity(e.target.value)}
             placeholder="Filter by city…"
-            className="w-48 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-red-400 focus:bg-white focus:ring-2 focus:ring-red-100 transition"
+            className="w-full sm:w-48 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-red-400 focus:bg-white focus:ring-2 focus:ring-red-100 transition"
           />
           {hasFilters && (
             <button onClick={clearFilters} className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-500 hover:bg-slate-50 transition whitespace-nowrap">
@@ -280,7 +280,7 @@ export default function AdminDonorsPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[900px] text-sm">
               <thead>
                 <tr className="border-b border-slate-100">
                   {['Donor', 'QIMS ID', 'Department', 'Blood Group', 'City / Area', 'Age', 'Gender', 'Last Donation', 'Status', 'Action'].map(h => (

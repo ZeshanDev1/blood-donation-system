@@ -126,7 +126,7 @@ export default function VolunteerPage() {
         </div>
 
         {/* form card */}
-        <div className="bg-black/70 border border-red-600/20 rounded-2xl p-8 backdrop-blur-xl shadow-2xl space-y-8">
+        <div className="bg-black/70 border border-red-600/20 rounded-2xl p-5 sm:p-8 backdrop-blur-xl shadow-2xl space-y-8">
           <form onSubmit={handleSubmit} className="space-y-8">
 
             {error && (
